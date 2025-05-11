@@ -6,4 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BookVisionWeb.Interface\BookVisionWeb.Interface.csproj" />
+    <ProjectReference Include="..\BookVisionWeb.UseCase\BookVisionWeb.UseCase.csproj" />
+    <ProjectReference Include="..\BookVisionWeb.Domain\BookVisionWeb.Domain.csproj" />
+    <PackageReference Include="Tesseract" Version="5.2.0" />
+  </ItemGroup>
+
 </Project>

@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
+    <ProjectReference Include="..\BookVisionWeb.Interface\BookVisionWeb.Interface.csproj" />
+    <ProjectReference Include="..\BookVisionWeb.Infrastructure\BookVisionWeb.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
