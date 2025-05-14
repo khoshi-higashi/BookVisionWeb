@@ -12,7 +12,7 @@ public sealed class TesseractGateway : IOcrGateway
             StartInfo = new ProcessStartInfo
             {
                 FileName = "tesseract",
-                Arguments = $"\"{imagePath}\" stdout -l eng",
+                Arguments = $"\"{imagePath}\" stdout -l jpn_vert",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
