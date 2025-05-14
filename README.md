@@ -49,3 +49,64 @@ curl -X POST http://localhost:5040/api/pages/$PAGE_ID/ocr | jq -r .text | tr -d 
 ```
 
 - jpn_vert.traineddata は /opt/homebrew/share/tessdata に配置（macOS）
+
+---
+
+## 🗒 開発メモ（OCR 動作確認備忘録）
+
+> macOS / zsh の例です。Windows PowerShell ではコマンドを読み替えてください。
+
+### ✅ 前提環境
+
+| 項目                  | 確認コマンド             | 期待結果               |
+| --------------------- | ------------------------ | ---------------------- |
+| .NET SDK 9            | `dotnet --version`       | `9.x.xxx`              |
+| Tesseract  ランタイム | `tesseract --version`    | バージョンが表示される |
+| 英語辞書              | `tesseract --list-langs` | `eng` が含まれる       |
+| プロジェクト依存      | `dotnet build`           | `Build succeeded`      |
+
+### ▶️ Web API 起動
+
+```bash
+cd ~/Projects/BookVisionWeb
+dotnet run --project BookVisionWeb.Web &
+APP_PID=$!
+sleep 5
+```
+
+### 🖼️ 画像アップロード → OCR 実行 → 結果保存
+
+```bash
+PAGE_ID=$(curl -s -F "file=@sample.jpg" http://localhost:5040/api/pages | jq -r .pageId)
+curl -X POST http://localhost:5040/api/pages/$PAGE_ID/ocr | jq -r .text | tr -d ' ' > ocr_result.txt
+```
+
+- `ocr_result.txt` に OCR 結果を保存（半角スペースなし）
+
+### 🧪 期待レスポンス例
+
+```json
+{
+  "pageId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "text": "Thequickbrownfoxjumpsoverthelazydog1234567890"
+}
+```
+
+### ⚠️ よくあるエラーと対処法
+
+| 症状                                             | 対策                                                      |
+| ------------------------------------------------ | --------------------------------------------------------- |
+| `text` が空                                      | 画像 DPI 不足、Tesseract 辞書不足（300DPI 以上 & `-jpn`） |
+| `curl: (7) Failed to connect`                    | API 起動待ち時間不足。`sleep 5` を調整                    |
+| `500` エラー                                     | Tesseract DLL や`TESSDATA_PREFIX`の設定漏れ               |
+| `DllNotFoundException: liblept…`                 | `brew install leptonica`                                  |
+| `System.InvalidOperationException (Antiforgery)` | `.DisableAntiforgery()` 忘れに注意                        |
+
+### 🧹 クリーンアップ
+
+```bash
+kill $APP_PID
+rm /private/tmp/*.jpg
+```
+
+---
