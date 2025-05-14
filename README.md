@@ -35,3 +35,17 @@ BookVisionWeb.sln
 ```bash
 dotnet test
 ```
+
+---
+
+## 🗒 開発メモ（縦書き OCR 備忘録）
+
+- Tesseract は `jpn_vert` モデルを使うことで縦書きにも対応可能
+- 画像を左に 90 度回転させると精度が上がる（sips -r -90 など）
+- 出力時に半角スペースを除くには：
+
+```bash
+curl -X POST http://localhost:5040/api/pages/$PAGE_ID/ocr | jq -r .text | tr -d ' ' > ocr_result.txt
+```
+
+- jpn_vert.traineddata は /opt/homebrew/share/tessdata に配置（macOS）
