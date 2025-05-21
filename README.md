@@ -60,7 +60,7 @@ curl -X POST http://localhost:5040/api/pages/$PAGE_ID/ocr | jq -r .text | tr -d 
 
 | 項目                  | 確認コマンド             | 期待結果               |
 | --------------------- | ------------------------ | ---------------------- |
-| .NET SDK 9            | `dotnet --version`       | `9.x.xxx`              |
+| .NET SDK 8            | `dotnet --version`       | `8.x.xxx`              |
 | Tesseract  ランタイム | `tesseract --version`    | バージョンが表示される |
 | 英語辞書              | `tesseract --list-langs` | `eng` が含まれる       |
 | プロジェクト依存      | `dotnet build`           | `Build succeeded`      |
