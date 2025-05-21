@@ -14,4 +14,5 @@ builder.Services.AddSingleton<IOcrGateway, TesseractGateway>();
 
 var app = builder.Build();
 app.MapOcr();                       // Interface で定義した拡張メソッド
+app.MapUploadForm();
 app.Run("http://localhost:5040");
