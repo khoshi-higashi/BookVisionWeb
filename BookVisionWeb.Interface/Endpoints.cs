@@ -33,13 +33,23 @@ public static class Endpoints
         // --- Run OCR on a registered page ---
         app.MapPost("/api/pages/{pageId:guid}/ocr",
             async (Guid pageId,
-                   IRecognizePageUseCase uc,
-                   RecognizePageJsonPresenter presenter) =>
+                   IPageRepository repo,
+                   IOcrGateway ocr) =>
             {
-                await uc.HandleAsync(new(new PageId(pageId)), presenter);
-                return Results.Ok(presenter.View);
-            }).DisableAntiforgery();
+                // 1. DBからPage取得
+                var page = await repo.FindAsync(new PageId(pageId)); if (page == null) return Results.NotFound();
 
+                // 2. OCR実行
+                var text = await ocr.RecognizeAsync(page.ImagePath);
+
+                // 3. OCRテキストセット＋登録日時セット
+                page.AttachOcr(text);
+
+                // 4. DBへ保存（RegisteredAtも含めて保存）
+                await repo.SaveAsync(page);
+
+                return Results.Ok(new { pageId = page.Id.Value, ocrText = page.OcrText, registeredAt = page.RegisteredAt });
+            }).DisableAntiforgery();
         return app;
     }
 
@@ -80,13 +90,23 @@ public static class Endpoints
             page.AttachOcr(text);
             await repo.SaveAsync(page);
 
-return Results.Text($@"
+            return Results.Text($@"
     <html>
-      <head><meta charset =""UTF - 8""></head>
+      <head><meta charset=""UTF-8""></head>
       <body>
         <h2>OCR結果</h2>
-        <pre>{ System.Net.WebUtility.HtmlEncode(text) }</pre>
+        <pre>{System.Net.WebUtility.HtmlEncode(text)}</pre>
+        <button id=""saveBtn"">保存</button>
         <a href=""/upload"">戻る</a>
+        <script>
+          document.getElementById('saveBtn').onclick = function() {{
+            fetch('/api/pages/{pageId.Value}/ocr', {{
+              method: 'POST'
+            }})
+            .then(r => r.ok ? alert('保存しました') : alert('保存失敗'))
+            .catch(() => alert('通信エラー'));
+          }};
+        </script>
       </body>
     </html>
 ", "text/html; charset=utf-8");

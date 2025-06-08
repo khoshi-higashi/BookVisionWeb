@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Npgsql" Version="9.0.3" />
     <ProjectReference Include="..\BookVisionWeb.Interface\BookVisionWeb.Interface.csproj" />
     <ProjectReference Include="..\BookVisionWeb.UseCase\BookVisionWeb.UseCase.csproj" />
     <ProjectReference Include="..\BookVisionWeb.Domain\BookVisionWeb.Domain.csproj" />
