@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using System;
 using BookVisionWeb.Domain;
 using BookVisionWeb.UseCase;
 
@@ -55,18 +56,11 @@ public static class Endpoints
 
     public static WebApplication MapUploadForm(this WebApplication app)
     {
-        app.MapGet("/upload", () => Results.Text(@"
-    <html>
-      <head><meta charset=""UTF-8""></head>
-      <body>
-        <h1>画像アップロード</h1>
-        <form method=""post"" enctype=""multipart/form-data"" action=""/upload"">
-          <input type=""file"" name=""file"" accept=""image/*"" />
-          <input type=""submit"" value=""アップロード"" />
-        </form>
-      </body>
-    </html>
-", "text/html; charset=utf-8"));
+        app.MapGet("/upload", () =>
+        {
+            var html = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "templates", "upload_form.html"));
+            return Results.Text(html, "text/html; charset=utf-8");
+        });
 
         app.MapPost("/upload", async (HttpRequest request, IPageRepository repo, IOcrGateway ocr) =>
         {
@@ -90,26 +84,13 @@ public static class Endpoints
             page.AttachOcr(text);
             await repo.SaveAsync(page);
 
-            return Results.Text($@"
-    <html>
-      <head><meta charset=""UTF-8""></head>
-      <body>
-        <h2>OCR結果</h2>
-        <pre>{System.Net.WebUtility.HtmlEncode(text)}</pre>
-        <button id=""saveBtn"">保存</button>
-        <a href=""/upload"">戻る</a>
-        <script>
-          document.getElementById('saveBtn').onclick = function() {{
-            fetch('/api/pages/{pageId.Value}/ocr', {{
-              method: 'POST'
-            }})
-            .then(r => r.ok ? alert('保存しました') : alert('保存失敗'))
-            .catch(() => alert('通信エラー'));
-          }};
-        </script>
-      </body>
-    </html>
-", "text/html; charset=utf-8");
+            // Load result HTML template and inject dynamic values
+            var template = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "templates", "ocr_result.html"));
+            var html = template
+                .Replace("{{ocrText}}", System.Net.WebUtility.HtmlEncode(text))
+                .Replace("{{pageId}}", pageId.Value.ToString());
+
+            return Results.Text(html, "text/html; charset=utf-8");
         });
 
         return app;
