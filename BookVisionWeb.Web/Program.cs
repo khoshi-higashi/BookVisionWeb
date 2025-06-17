@@ -1,41 +1,26 @@
+using BookVisionWeb.Interface;
+using BookVisionWeb.UseCase;
+using BookVisionWeb.Infrastructure;
+
+DotNetEnv.Env.Load(); // .env を先にロード！
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// ここで .env から値を拾う
+var connString = Environment.GetEnvironmentVariable("BOOKVISIONWEB_DB");
+if (string.IsNullOrWhiteSpace(connString))
+    throw new Exception("BOOKVISIONWEB_DBが未設定です。");
+
+// UseCase
+builder.Services.AddScoped<IRecognizePageUseCase, RecognizePageInteractor>();
+// Interface
+builder.Services.AddScoped<RecognizePageJsonPresenter>();
+// Infrastructure: PostgreSQLへ切替
+builder.Services.AddScoped<IPageRepository>(provider =>
+    new PostgresPageRepository(connString!));
+builder.Services.AddSingleton<IOcrGateway, TesseractGateway>();
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
-app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+app.MapOcr();
+app.MapUploadForm();
+app.Run("http://localhost:5040");

@@ -1,9 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql" Version="9.0.3" />
+    <ProjectReference Include="..\BookVisionWeb.Interface\BookVisionWeb.Interface.csproj" />
+    <ProjectReference Include="..\BookVisionWeb.UseCase\BookVisionWeb.UseCase.csproj" />
+    <ProjectReference Include="..\BookVisionWeb.Domain\BookVisionWeb.Domain.csproj" />
+    <PackageReference Include="Tesseract" Version="5.2.0" />
+  </ItemGroup>
 
 </Project>
