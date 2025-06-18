@@ -4,6 +4,7 @@ using System.IO;
 using System;
 using BookVisionWeb.Domain;
 using BookVisionWeb.UseCase;
+using Microsoft.Extensions.Hosting;
 
 namespace BookVisionWeb.Interface;
 
@@ -54,15 +55,31 @@ public static class Endpoints
         return app;
     }
 
+    /// <summary>
+    /// Resolve the template path. First looks in &lt;ContentRoot&gt;/templates, then one level up.
+    /// </summary>
+    private static string ResolveTemplatePath(IHostEnvironment env, string fileName)
+    {
+        var primary = Path.Combine(env.ContentRootPath, "templates", fileName);
+        if (File.Exists(primary)) return primary;
+
+        // Fallback: ../templates
+        var fallback = Path.GetFullPath(Path.Combine(env.ContentRootPath, "..", "templates", fileName));
+        if (File.Exists(fallback)) return fallback;
+
+        throw new FileNotFoundException($"Template '{fileName}' was not found. Looked in '{primary}' and '{fallback}'.");
+    }
+
     public static WebApplication MapUploadForm(this WebApplication app)
     {
-        app.MapGet("/upload", () =>
+        app.MapGet("/upload", (IHostEnvironment env) =>
         {
-            var html = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "templates", "upload_form.html"));
+            var htmlPath = ResolveTemplatePath(env, "upload_form.html");
+            var html = File.ReadAllText(htmlPath);
             return Results.Text(html, "text/html; charset=utf-8");
         });
 
-        app.MapPost("/upload", async (HttpRequest request, IPageRepository repo, IOcrGateway ocr) =>
+        app.MapPost("/upload", async (HttpRequest request, IHostEnvironment env, IPageRepository repo, IOcrGateway ocr) =>
         {
             var file = request.Form.Files["file"];
             if (file == null || file.Length == 0)
@@ -85,7 +102,7 @@ public static class Endpoints
             await repo.SaveAsync(page);
 
             // Load result HTML template and inject dynamic values
-            var template = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "templates", "ocr_result.html"));
+            var template = File.ReadAllText(ResolveTemplatePath(env, "ocr_result.html"));
             var html = template
                 .Replace("{{ocrText}}", System.Net.WebUtility.HtmlEncode(text))
                 .Replace("{{pageId}}", pageId.Value.ToString());
