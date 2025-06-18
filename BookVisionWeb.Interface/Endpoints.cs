@@ -2,7 +2,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 using BookVisionWeb.Domain;
 using BookVisionWeb.UseCase;
 using Microsoft.Extensions.Hosting;
@@ -118,9 +119,9 @@ public static class Endpoints
             }
 
             // Rotate image 90 degrees counter‑clockwise for vertical text
-            using (var img = Image.FromFile(tempPath))
+            using (var img = Image.Load(tempPath))
             {
-                img.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                img.Mutate(x => x.Rotate(RotateMode.Rotate270));
                 img.Save(tempPath);
             }
 
