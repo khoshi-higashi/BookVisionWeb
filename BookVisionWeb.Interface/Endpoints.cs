@@ -74,7 +74,7 @@ public static class Endpoints
     {
         app.MapGet("/upload", (IHostEnvironment env) =>
         {
-            var htmlPath = ResolveTemplatePath(env, "upload_form.html");
+            var htmlPath = ResolveTemplatePath(env, "main.html");
             var html = File.ReadAllText(htmlPath);
             return Results.Text(html, "text/html; charset=utf-8");
         });
@@ -102,7 +102,7 @@ public static class Endpoints
             await repo.SaveAsync(page);
 
             // Load result HTML template and inject dynamic values
-            var template = File.ReadAllText(ResolveTemplatePath(env, "ocr_result.html"));
+            var template = File.ReadAllText(ResolveTemplatePath(env, "ocr_result_2000.html"));
             var html = template
                 .Replace("{{ocrText}}", System.Net.WebUtility.HtmlEncode(text))
                 .Replace("{{pageId}}", pageId.Value.ToString());
