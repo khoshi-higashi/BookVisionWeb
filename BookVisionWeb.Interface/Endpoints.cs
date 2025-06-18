@@ -32,6 +32,21 @@ public static class Endpoints
             return Results.Ok(new { pageId = pageId.Value });
         }).DisableAntiforgery();
 
+        // --- List all pages and OCR results ---
+        app.MapGet("/api/pages", async (IPageRepository repo) =>
+        {
+            var pages = await repo.FindAllAsync();
+            var response = pages.Select(p => new
+            {
+                pageId = p.Id.Value,
+                imagePath = p.ImagePath,
+                ocrText = p.OcrText,
+                ocrStatus = p.OcrStatus.ToString(),
+                registeredAt = p.RegisteredAt
+            });
+            return Results.Ok(response);
+        }).DisableAntiforgery();
+
         // --- Run OCR on a registered page ---
         app.MapPost("/api/pages/{pageId:guid}/ocr",
             async (Guid pageId,

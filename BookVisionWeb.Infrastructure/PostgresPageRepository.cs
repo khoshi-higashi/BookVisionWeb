@@ -68,5 +68,29 @@ namespace BookVisionWeb.Infrastructure
             }
             return null;
         }
+
+        public async Task<IEnumerable<Page>> FindAllAsync()
+        {
+            var pages = new List<Page>();
+            using var conn = new NpgsqlConnection(_connectionString);
+            await conn.OpenAsync();
+
+            using var cmd = new NpgsqlCommand(
+                "SELECT id, image_path, ocr_text, ocr_status, text, registered_at FROM pages ORDER BY registered_at", conn);
+
+            using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var pageId = new PageId(reader.GetGuid(0));
+                var imagePath = reader.GetString(1);
+                var page = new Page(pageId, imagePath);
+                if (!reader.IsDBNull(2)) page.AttachOcr(reader.GetString(2));
+                if (!reader.IsDBNull(3)) page.SetOcrStatus((OcrStatus)reader.GetInt32(3));
+                if (!reader.IsDBNull(4)) page.SetText(reader.GetString(4));
+                if (!reader.IsDBNull(5)) page.SetRegisteredAt(reader.GetDateTime(5));
+                pages.Add(page);
+            }
+            return pages;
+        }
     }
 }
