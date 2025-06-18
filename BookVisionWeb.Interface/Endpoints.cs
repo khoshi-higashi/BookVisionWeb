@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using System;
+using System.Drawing;
 using BookVisionWeb.Domain;
 using BookVisionWeb.UseCase;
 using Microsoft.Extensions.Hosting;
@@ -114,6 +115,13 @@ public static class Endpoints
             await using (var stream = File.Create(tempPath))
             {
                 await file.CopyToAsync(stream);
+            }
+
+            // Rotate image 90 degrees counter‑clockwise for vertical text
+            using (var img = Image.FromFile(tempPath))
+            {
+                img.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                img.Save(tempPath);
             }
 
             var page = new Page(pageId, tempPath);
