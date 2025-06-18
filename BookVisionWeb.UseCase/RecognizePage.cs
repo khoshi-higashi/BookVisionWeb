@@ -19,6 +19,7 @@ public interface IPageRepository
 {
     Task<Page?> FindAsync(PageId id);
     Task SaveAsync(Page page);
+    Task<IEnumerable<Page>> FindAllAsync();
 }
 
 public interface IOcrGateway
