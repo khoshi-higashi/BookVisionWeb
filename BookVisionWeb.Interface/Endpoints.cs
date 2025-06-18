@@ -110,6 +110,10 @@ public static class Endpoints
             return Results.Text(html, "text/html; charset=utf-8");
         });
 
+        // --- Easter‑egg: HTTP 418 “I'm a teapot” ---
+        app.MapGet("/coffee", () =>
+            Results.Text("I'm a teapot ☕🫖", "text/plain; charset=utf-8", statusCode: 418));
+
         return app;
     }
 }
