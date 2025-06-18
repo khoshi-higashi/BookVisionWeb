@@ -142,8 +142,12 @@ public static class Endpoints
         });
 
         // --- Easter‑egg: HTTP 418 “I'm a teapot” ---
-        app.MapGet("/coffee", () =>
-            Results.Text("I'm a teapot ☕🫖", "text/plain; charset=utf-8", statusCode: 418));
+        app.MapGet("/coffee", (IHostEnvironment env) =>
+        {
+            var htmlPath = ResolveTemplatePath(env, "teapot_2000.html");
+            var html = File.ReadAllText(htmlPath);
+            return Results.Text(html, "text/html; charset=utf-8", statusCode: 418);
+        });
 
         return app;
     }
