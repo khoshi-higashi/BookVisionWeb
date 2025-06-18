@@ -94,6 +94,13 @@ public static class Endpoints
             return Results.Text(html, "text/html; charset=utf-8");
         });
 
+        app.MapGet("/pages", (IHostEnvironment env) =>
+        {
+            var htmlPath = ResolveTemplatePath(env, "pages_list.html");
+            var html = File.ReadAllText(htmlPath);
+            return Results.Text(html, "text/html; charset=utf-8");
+        });
+
         app.MapPost("/upload", async (HttpRequest request, IHostEnvironment env, IPageRepository repo, IOcrGateway ocr) =>
         {
             var file = request.Form.Files["file"];

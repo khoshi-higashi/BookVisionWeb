@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>OCR結果一覧</title>
+</head>
+<body>
+    <h1>OCR結果一覧</h1>
+    <ul id="pageList"></ul>
+    <a href="/upload">戻る</a>
+    <script>
+        fetch('/api/pages')
+            .then(r => r.json())
+            .then(pages => {
+                const list = document.getElementById('pageList');
+                pages.forEach(p => {
+                    const li = document.createElement('li');
+                    li.textContent = `${p.pageId}: ${p.ocrText ?? '(OCR未実行)'}`;
+                    list.appendChild(li);
+                });
+            })
+            .catch(() => {
+                document.getElementById('pageList').innerText = '読み込み失敗';
+            });
+    </script>
+</body>
+</html>
+

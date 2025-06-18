@@ -76,7 +76,8 @@ namespace BookVisionWeb.Infrastructure
             await conn.OpenAsync();
 
             using var cmd = new NpgsqlCommand(
-                "SELECT id, image_path, ocr_text, ocr_status, text, registered_at FROM pages ORDER BY registered_at", conn);
+                "SELECT id, image_path, ocr_text, ocr_status, text, registered_at FROM pages ORDER BY registered_at",
+                conn);
 
             using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
