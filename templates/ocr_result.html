@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <h2>OCR結果</h2>
+    <pre>{{ocrText}}</pre>
+    <button id="saveBtn">保存</button>
+    <a href="/upload">戻る</a>
+    <script>
+        document.getElementById('saveBtn').onclick = function () {
+            fetch('/api/pages/{{pageId}}/ocr', { method: 'POST' })
+                .then(r => r.ok ? alert('保存しました') : alert('保存失敗'))
+                .catch(() => alert('通信エラー'));
+        };
+    </script>
+</body>
+
+</html>

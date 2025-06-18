@@ -17,5 +17,11 @@ namespace BookVisionWeb.Infrastructure
             _store[page.Id] = page;
             return Task.CompletedTask;
         }
+
+        public Task<IEnumerable<Page>> FindAllAsync()
+        {
+            var pages = _store.Values.ToArray();
+            return Task.FromResult<IEnumerable<Page>>(pages);
+        }
     }
 }

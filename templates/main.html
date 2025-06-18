@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ja">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+    <title>画像アップロード</title>
+</head>
+
+<body bgcolor="#FFFFCC" background="bg_tile.gif" style="font-family:'MS Gothic',Osaka,sans-serif;">
+    <center>
+        <marquee bgcolor="#00FFFF" scrollamount="6" width="90%">
+            <font color="#FF0000">★画像アップロードはこちらから★</font>
+        </marquee>
+        <br>
+        <table border="2" bgcolor="#FFFFFF" cellpadding="10">
+            <tr>
+                <td align="center">
+                    <form method="post" enctype="multipart/form-data" action="/upload">
+                        <input type="file" name="file" accept="image/*"
+                            style="font-family:'MS Gothic';background:#FFFF00;color:#0000FF;">
+                        <input type="submit" value="アップロード"
+                            style="font-family:'MS Gothic';background:#FF0000;color:#FFFFFF;">
+                    </form>
+                    <br>
+                    <button id="coffeeBtn" type="button"
+                        style="background:#00FF00;color:#000;font-family:'MS Gothic';">☕ コーヒーを淹れる</button>
+                    <br>
+                    <a href="/pages" style="font-family:'MS Gothic';color:#0000FF;">▶ OCR結果一覧を見る</a>
+                    <br><br>
+                    <img src="sparkle.gif" alt="キラキラ">
+                    <img src="point.gif" alt="ポイント">
+                    <img src="new.gif" alt="NEW!">
+                    <br><br>
+                    <img src="under_construction.gif" alt="工事中">
+                </td>
+            </tr>
+        </table>
+        <br>
+        <table border="1" bgcolor="#EEEEEE" width="400">
+            <tr>
+                <td>
+                    <font face="MS Gothic" size="2" color="#0000FF">
+                        <b>■管理人プロフィール■</b><br>
+                        名前：たろう<br>
+                        趣味：BBS巡回・画像収集<br>
+                        好きなBGM：MIDI全般<br>
+                        <b>■更新履歴■</b><br>
+                        2025/06/18…画像アップロードページOPEN！<br>
+                        2025/06/15…カウンター設置<br>
+                        2025/06/10…BBS開設<br>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <img src="banner_geocities.gif" alt="ジオシティーズバナー">
+        <br>
+        <!-- テーブル内など好きな場所に設置 -->
+        <span id="visitorCount"
+            style="font-family:'MS Gothic';font-size:18px;color:#FF0000;background:#FFFF00;border:2px inset #00FF00;padding:2px 10px;">現在の閲覧者数：--人</span>
+        <img src="counter.gif" alt="カウンター">
+
+        <script language="JavaScript">
+            // 疑似的に閲覧者数をランダム表示＆数秒ごとに変動
+            (function () {
+                var min = 2; // 最小値（寂しいので最低2人にする）
+                var max = 12; // 最大値（好きな値に）
+                var e = document.getElementById('visitorCount');
+                function update() {
+                    // ページロード時の乱数+時刻でちょっとだけリアル感
+                    var base = Math.floor(Math.random() * (max - min + 1)) + min;
+                    var time = Math.floor((Date.now() / 7000) % 5); // 7秒周期でちょっと上下
+                    var count = base + time;
+                    e.innerHTML = '現在の閲覧者数：<b>' + count + '</b>人';
+                }
+                setInterval(update, 3200); // 3.2秒ごとに再描画
+                update();
+            })();
+        </script>
+    </center>
+    <script language="JavaScript">
+        document.getElementById('coffeeBtn').onclick = function () {
+            window.location = '/coffee';
+        };
+    </script>
+</body>
+
+</html>

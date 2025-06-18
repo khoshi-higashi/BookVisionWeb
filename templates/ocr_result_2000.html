@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>OCR結果☆ホームページ</title>
+    <style>
+        body {
+            background-image: url('bg_tile.gif');
+            background-repeat: repeat;
+            font-family: 'MS Gothic', 'ＭＳ ゴシック', Osaka, sans-serif;
+            color: #00FF00;
+        }
+        table, td {
+            border: 2px solid #FF0000;
+            background-color: #FFFFCC;
+        }
+        h2 {
+            font-family: 'MS Gothic', 'ＭＳ ゴシック', Osaka, sans-serif;
+            color: #FF00FF;
+            background-color: #00FFFF;
+            padding: 5px;
+            text-align: center;
+        }
+        pre {
+            font-size: 14px;
+            font-family: 'MS Gothic', 'ＭＳ ゴシック', Osaka, monospace;
+            background: #FFFFFF;
+            color: #0000FF;
+            padding: 10px;
+            border: 1px solid #00FF00;
+        }
+        #saveBtn {
+            font-family: 'MS Gothic', 'ＭＳ ゴシック';
+            background: #FF0000;
+            color: #FFFFFF;
+            border: 2px outset #00FF00;
+            font-size: 16px;
+            padding: 5px 16px;
+            margin: 8px;
+        }
+        a {
+            font-family: 'MS Gothic', 'ＭＳ ゴシック';
+            background: #FFFF00;
+            color: #0000FF;
+            border: 1px solid #00FF00;
+            padding: 2px 12px;
+            text-decoration: none;
+            margin: 8px;
+        }
+      </style>
+</head>
+
+<body>
+<center>
+    <table width="700" bgcolor="#FFFFCC" align="center">
+        <tr>
+            <td align="center" bgcolor="#FFCCCC">
+                <img src="title_kirakira.gif" alt="タイトル" border="0"><br>
+                <font face="MS Gothic" size="4" color="#FF0000"><blink>OCR結果ページ</blink></font>
+                <br>
+                <img src="sparkle.gif" alt="キラキラ">
+                <img src="point.gif" alt="ポイント">
+                <img src="under_construction.gif" alt="工事中">
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+                <h2>OCR結果</h2>
+                <pre>{{ocrText}}</pre>
+                <button id="saveBtn">保存</button>
+                <a href="/upload">戻る</a>
+            </td>
+        </tr>
+        <tr>
+            <td align="center" bgcolor="#CCCCFF">
+                <img src="counter.gif" alt="カウンター">
+                <br>
+                <font face="MS Gothic" size="2">
+                【素材は<a href="https://sozaiya.example.com" target="_blank">○○素材屋</a>様よりお借りしています】
+                ｜リンクフリー｜無断リンク禁止
+                </font>
+                <br>
+                <img src="banner_88x31.gif" alt="バナー" border="0">
+            </td>
+        </tr>
+    </table>
+    <br>
+    <img src="banner_geocities.gif" alt="ジオシティーズバナー">
+</center>
+<bgsound src="bgm_sample.mid" loop="infinite">
+<embed src="bgm_sample.mid" autostart="true" hidden="true">
+<script>
+    document.getElementById('saveBtn').onclick = function () {
+        fetch('/api/pages/{{pageId}}/ocr', { method: 'POST' })
+            .then(r => r.ok ? alert('保存しました') : alert('保存失敗'))
+            .catch(() => alert('通信エラー'));
+    };
+    // 点滅テキスト(IE/古ブラウザ用)
+    function blink(){
+        var el = document.getElementsByTagName('blink');
+        for(var i=0;i<el.length;i++){
+            if(el[i].style.visibility=='hidden'){
+                el[i].style.visibility='visible';
+            }else{
+                el[i].style.visibility='hidden';
+            }
+        }
+    }
+    setInterval(blink,500);
+</script>
+</body>
+
+</html>
