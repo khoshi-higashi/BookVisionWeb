@@ -1,28 +1,73 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>OCR結果一覧</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+    <title>OCR結果一覧☆ホームページ</title>
+    <style>
+        body {
+            background-image: url('bg_tile.gif');
+            font-family: 'MS Gothic', Osaka, sans-serif;
+        }
+        table {
+            border: 2px solid #FF00FF;
+            background-color: #FFFFCC;
+        }
+        h1 {
+            font-size: 24px;
+            color: #FF0000;
+            background-color: #00FFFF;
+        }
+        li {
+            font-size: 14px;
+            color: #0000FF;
+        }
+        a {
+            background: #FFFF00;
+            color: #0000FF;
+            text-decoration: none;
+            border: 1px solid #00FF00;
+            padding: 2px 8px;
+            font-family: 'MS Gothic';
+        }
+    </style>
 </head>
 <body>
-    <h1>OCR結果一覧</h1>
-    <ul id="pageList"></ul>
-    <a href="/upload">戻る</a>
-    <script>
-        fetch('/api/pages')
-            .then(r => r.json())
-            .then(pages => {
-                const list = document.getElementById('pageList');
-                pages.forEach(p => {
-                    const li = document.createElement('li');
-                    li.textContent = `${p.pageId}: ${p.ocrText ?? '(OCR未実行)'}`;
-                    list.appendChild(li);
-                });
-            })
-            .catch(() => {
-                document.getElementById('pageList').innerText = '読み込み失敗';
-            });
-    </script>
+<center>
+    <table cellpadding="8">
+        <tr>
+            <td align="center">
+                <h1><blink>OCR結果一覧</blink></h1>
+                <ul id="pageList" style="list-style:none;padding:0;margin:8px 0;"></ul>
+                <a href="/upload">アップロードへ戻る</a>
+                <br>
+                <img src="under_construction.gif" alt="工事中">
+            </td>
+        </tr>
+    </table>
+</center>
+<script>
+fetch('/api/pages')
+  .then(r => r.json())
+  .then(pages => {
+      const list = document.getElementById('pageList');
+      pages.forEach(p => {
+          const li = document.createElement('li');
+          li.textContent = p.pageId + ': ' + (p.ocrText ?? '(OCR未実行)');
+          list.appendChild(li);
+      });
+  })
+  .catch(() => {
+      document.getElementById('pageList').innerText = '読み込み失敗';
+  });
+function blink(){
+    var el = document.getElementsByTagName('blink');
+    for(var i=0;i<el.length;i++){
+        el[i].style.visibility = el[i].style.visibility=='hidden' ? 'visible' : 'hidden';
+    }
+}
+setInterval(blink,500);
+</script>
+<bgsound src="bgm_sample.mid" loop="infinite">
+<embed src="bgm_sample.mid" autostart="true" hidden="true">
 </body>
 </html>
-
